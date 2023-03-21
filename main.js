@@ -48,12 +48,43 @@ const convertirLinea = (linea) => {
     }
 };
 
+//Funcion para procesar una lista
+const procesarLista = (lineas) => {
+    lineas = lineas.map(linea => {return linea.replace('*', '<li>') + '</li>\n'});
+
+    lineas.push("</ul>\n");
+    lineas.unshift("<ul>\n")
+
+
+
+    return lineas;
+}
+
+// Funcion para procesar un bloque
+const procesarBloque = (lineas) => {
+    const primerCaracter = lineas[0][0];
+
+    if (primerCaracter === "*") {
+        //procesar lista
+        lineas = procesarLista(lineas);
+        return lineas;
+
+    } else {
+        //procesar lineas
+        lineas = lineas.map(linea => convertirLinea(linea));
+        return lineas;
+    }
+
+}
+
 // Script para correr un ejemplo
 const convertirMarkdownAHtml = (textoMarkdown) => {
     //separar lineas
     const lineas = textoMarkdown.split('\n');
-    //
-    const lineasHtml = lineas.map(convertirLinea);
+    
+    const lineasHtml = procesarBloque(lineas)
+
+    //const lineasHtml = lineas.map(convertirLinea);
     const resultadoHtml = lineasHtml.join('');
     return resultadoHtml;
 };
@@ -82,6 +113,22 @@ Markdown puede ser usado para muchas cosas. Por ejemplo la gente lo utiliza para
 
 `;
 
+const textoBloque = `# El formato Markdown 
+## Parte 1
+El formato de markdown es ampliamente utilizado porque permite describir un **contenido en forma estructurada** en forma sencilla.`;
+
+const textoLista = `* crear páginas web
+* publicar documentos, 
+* escribir notas
+* hacer presentaciones
+* redactar correos
+* generar documentación técnica
+* escribir libros `;
+
 //corre funcion y printea retorno en consola
-const resultadoHtml = convertirMarkdownAHtml(textoMarkdown);
-console.log(resultadoHtml);
+
+const resultadosBloque = convertirMarkdownAHtml(textoBloque);
+console.log(resultadosBloque);
+
+const resultadosLista = convertirMarkdownAHtml(textoLista);
+console.log(resultadosLista);
