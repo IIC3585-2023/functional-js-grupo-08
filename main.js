@@ -1,39 +1,6 @@
-import {procesarBloque} from "./functions.js";
 
-// Script para correr un ejemplo
-const convertirMarkdownAHtml = (textoMarkdown) => {
-    //separar lineas
-    const lineas = textoMarkdown.split('\n');
-    
-    const lineasHtml = procesarBloque(lineas);
+import { ProcessMarkdownFile} from "./process_markdown.js";
 
-    //const lineasHtml = lineas.map(convertirLinea);
-    const resultadoHtml = lineasHtml.join('');
-    return resultadoHtml;
-};
+const args = process.argv;
+ProcessMarkdownFile(args[2], args[3]);
 
-const textoBloque = `# El formato Markdown 
-## Parte 1
-El formato de markdown es ampliamente utilizado porque permite describir un **contenido en forma estructurada** en forma sencilla.`;
-
-const textoLista = `* crear páginas web
-* publicar documentos, 
-* escribir notas
-* hacer presentaciones
-* redactar correos
-* generar documentación técnica
-* escribir libros `;
-
-const textoListaORD = `1. Primer elemento
-2. Segundo elemento 
-3. Tercer elemento`;
-//corre funcion y printea retorno en consola
-
-const resultadosBloque = convertirMarkdownAHtml(textoBloque);
-console.log(resultadosBloque);
-
-const resultadosLista = convertirMarkdownAHtml(textoLista);
-console.log(resultadosLista);
-
-const resultadosListaORD = convertirMarkdownAHtml(textoListaORD);
-console.log(resultadosListaORD);

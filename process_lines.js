@@ -1,16 +1,12 @@
 // Función por liena (recibe una linea y devuelve una liena)
 const convertirLinea = (linea) => {
-      
-    //linea vacia
-    if (linea.trim() === ""){return '';}
-    
-    // Negrita
-    linea = linea.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    linea = linea.replace(/__(.*?)__/g, '<strong>$1</strong>');
 
-    // Cursiva
-    linea = linea.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    linea = linea.replace(/_(.*?)_/g, '<em>$1</em>');
+    // Negrita
+    const line = linea
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/_(.*?)_/g, '<em>$1</em>');
 
     /*
     //Enlaces
@@ -21,16 +17,16 @@ const convertirLinea = (linea) => {
     */
 
     // Línea horizontal
-    if (linea.match(/^---$/)) {
+    if (line.match(/^---$/)) {
         return '<hr>\n';
     }
 
-    let counter =header(linea,0);
+    let counter =header(line,0); //  ###3 => va a desaparecer el 3
     if(counter>0){
-      return `<h${counter}>${linea.slice(counter+1)}</h${counter}>\n`;
+      return `<h${counter}>${line.slice(counter+1)}</h${counter}>\n`;
     }
     else{
-        return `<p>${linea}</p>\n`;
+        return `<p>${line}</p>\n`;
     }
 };
 
@@ -41,7 +37,7 @@ let header = (string, counter) => string[counter]==="#"?header(string,counter+1)
 const procesarLista = (lineas) => {
     lineas = lineas.map(linea => {return linea.replace('* ', '<li>') + '</li>\n'});
 
-    lineas.push("</ul>\n");
+    lineas.push("</ul>\n"); // agregar tabs en lo que imprime
     lineas.unshift("<ul>\n");
     return lineas;
 };
@@ -58,7 +54,7 @@ const procesarListaOrdenada = (lineas) => {
     return lineas;
 };
 
-// Funcion para procesar un bloque
+// Funcion para procesar un bloque *k hfhdifhe
 export function procesarBloque(lineas) {
     if (lineas[0].trim()[0] === "*") {
         //procesar lista
