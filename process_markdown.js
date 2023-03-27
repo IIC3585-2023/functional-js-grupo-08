@@ -1,5 +1,5 @@
 import { readFileSync, writeFile } from 'fs';
-import {procesarBloque} from "./process_lines.js";
+import {processBlock} from "./process_lines.js";
 // IMPORTANTE HAY QUE HACERLO CON LINUX SALTO DE LINEAS SON TRATADOS DE MANERA DISTINTA CON WINDOWS Y MACOS
 export function ProcessMarkdownFile(markdownFilePath, outpuFileName){
     const content = readFileSync(markdownFilePath, {encoding:'utf8', flag:'r'});
@@ -9,7 +9,7 @@ export function ProcessMarkdownFile(markdownFilePath, outpuFileName){
         .filter(n => JSON.stringify(n) !== '[""]' )
         .map(block => block.filter(line => line));
     const htmlFileContent = contentByBlocks
-        .map(block => procesarBloque(block))
+        .map(block => processBlock(block))
         .map(htmlBlock => htmlBlock.join(""))
         .join("");
     writeFile(`output/${outpuFileName}.html`,htmlFileContent , (err) => {
@@ -25,7 +25,7 @@ function ProcessMarkDownRawText(markdownRawText){
         .map((l) =>l.split("\n"))
         .filter(n => JSON.stringify(n) !== '[""]' )
         .map(block => block.filter(line => line));
-    const htmlBlocks = contentByBlocks.map(block => procesarBloque(block));
+    const htmlBlocks = contentByBlocks.map(block => processBlock(block));
     return htmlBlocks.map(htmlBlock => htmlBlock.join("")).join("")
 };
 

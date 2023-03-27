@@ -1,8 +1,8 @@
 // Función por liena (recibe una linea y devuelve una liena)
-const convertirLinea = (linea) => {
+const convertLine = (line) => {
 
     // Negrita
-    const line = linea
+    const line = line
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/__(.*?)__/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
@@ -10,10 +10,10 @@ const convertirLinea = (linea) => {
 
     /*
     //Enlaces
-    linea = linea.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+    line = line.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
 
     // Imágenes
-    linea = linea.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+    line = line.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
     */
 
     // Línea horizontal
@@ -34,39 +34,39 @@ const convertirLinea = (linea) => {
 let header = (string, counter) => string[counter]==="#"?header(string,counter+1):counter;
 
 //Funcion para procesar una lista
-const procesarLista = (lineas) => {
-    lineas = lineas.map(linea => {return linea.replace('* ', '<li>') + '</li>\n'});
+const processList = (lines) => {
+    lines = lines.map(line => {return line.replace('* ', '<li>') + '</li>\n'});
 
-    lineas.push("</ul>\n"); // agregar tabs en lo que imprime
-    lineas.unshift("<ul>\n");
-    return lineas;
+    lines.push("</ul>\n"); // agregar tabs en lo que imprime
+    lines.unshift("<ul>\n");
+    return lines;
 };
 
 //Funcion para procesar una lista ordenada
-const procesarListaOrdenada = (lineas) => {
+const processOrderdList = (lines) => {
     let counter = 0;
-    lineas = lineas.map(linea => {
+    lines = lines.map(line => {
       counter++;
-      return linea.replace(`${counter}. `, '<li>') + '</li>\n'
+      return line.replace(`${counter}. `, '<li>') + '</li>\n'
     });
-    lineas.push("</ol>\n");
-    lineas.unshift("<ol>\n");
-    return lineas;
+    lines.push("</ol>\n");
+    lines.unshift("<ol>\n");
+    return lines;
 };
 
 // Funcion para procesar un bloque *k hfhdifhe
-export function procesarBloque(lineas) {
-    if (lineas[0].trim()[0] === "*") {
+export function processBlock(lines) {
+    if (lines[0].trim()[0] === "*") {
         //procesar lista
-        return procesarLista(lineas);
+        return processList(lines);
     }
-    else if (lineas[0].trim()[0] === "1" && lineas[0].trim()[1] === ".") {
+    else if (lines[0].trim()[0] === "1" && lines[0].trim()[1] === ".") {
         //procesar lista ordenada
-        return procesarListaOrdenada(lineas);
+        return processOrderdList(lines);
     }
     else {
         //procesar lineas
-        return lineas.map(linea => convertirLinea(linea));
+        return lines.map(line => convertLine(line));
     }
 };
 
