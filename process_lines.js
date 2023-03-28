@@ -7,13 +7,13 @@ const convertLine = (line) => {
     // Imágenes
     line = line.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
     */
-
+    
     // Línea horizontal
     if (line.match(/^---$/)) {
         return '<hr>\n';
     }
     line = processText(line);
-    let counter =header(line,0); //  ###3 => va a desaparecer el 3
+    let counter =headerCounter(line,0); //  ###3 => va a desaparecer el 3
     if(counter>0){
       return `<h${counter}>${line.slice(counter+1)}</h${counter}>\n`;
     }
@@ -23,7 +23,7 @@ const convertLine = (line) => {
 };
 
 //Funcion para contar #
-let header = (string, counter) => string[counter]==="#"?header(string,counter+1):counter;
+let headerCounter = (string, counter) => string[counter]==="#"?headerCounter(string,counter+1):counter;
 
 //Funcion para procesar texto
 const processText = (text) => {
