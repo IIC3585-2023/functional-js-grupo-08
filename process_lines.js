@@ -1,13 +1,5 @@
 // Función por liena (recibe una linea y devuelve una liena)
 const convertLine = (line) => {
-
-    // Negrita
-    const line = line
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/__(.*?)__/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/_(.*?)_/g, '<em>$1</em>');
-
     /*
     //Enlaces
     line = line.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
@@ -15,13 +7,13 @@ const convertLine = (line) => {
     // Imágenes
     line = line.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
     */
-
+    
     // Línea horizontal
     if (line.match(/^---$/)) {
         return '<hr>\n';
     }
-
-    let counter =header(line,0); //  ###3 => va a desaparecer el 3
+    line = processText(line);
+    let counter =headerCounter(line,0); //  ###3 => va a desaparecer el 3
     if(counter>0){
       return `<h${counter}>${line.slice(counter+1)}</h${counter}>\n`;
     }
@@ -31,11 +23,20 @@ const convertLine = (line) => {
 };
 
 //Funcion para contar #
-let header = (string, counter) => string[counter]==="#"?header(string,counter+1):counter;
+let headerCounter = (string, counter) => string[counter]==="#"?headerCounter(string,counter+1):counter;
+
+//Funcion para procesar texto
+const processText = (text) => {
+    return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/_(.*?)_/g, '<em>$1</em>');
+}
 
 //Funcion para procesar una lista
 const processList = (lines) => {
-    lines = lines.map(line => {return line.replace('* ', '<li>') + '</li>\n'});
+    lines = lines.map(line => {return processText(line.replace('* ', `   <li>`) + '</li>\n');});
 
     lines.push("</ul>\n"); // agregar tabs en lo que imprime
     lines.unshift("<ul>\n");
@@ -47,7 +48,7 @@ const processOrderdList = (lines) => {
     let counter = 0;
     lines = lines.map(line => {
       counter++;
-      return line.replace(`${counter}. `, '<li>') + '</li>\n'
+      return processText(line.replace(`${counter}. `, `   <li>`) + '</li>\n');
     });
     lines.push("</ol>\n");
     lines.unshift("<ol>\n");
