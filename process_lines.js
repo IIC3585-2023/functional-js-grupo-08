@@ -1,67 +1,58 @@
-// Función por liena (recibe una linea y devuelve una liena)
-const convertLine = (line) => {
-    /*
-    //Enlaces
-    line = line.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+import _ from 'lodash';
 
-    // Imágenes
-    line = line.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
-    */
-    
+// Función por linea (recibe una linea y devuelve una linea)
+const convertLine = (line) => {
     // Línea horizontal
     if (line.match(/^---$/)) {
         return '<hr>\n';
     }
-    line = processText(line);
-    let counter =headerCounter(line,0); //  ###3 => va a desaparecer el 3
-    if(counter>0){
-      return `<h${counter}>${line.slice(counter+1)}</h${counter}>\n`;
+    const proccesedLine = processText(line);
+    const firstChar = proccesedLine.split(" ")[0];
+    if (countHashtags(firstChar) === firstChar.length){
+        return `<h${firstChar.length}>${proccesedLine.slice(firstChar.length+1)}</h${firstChar.length}>\n`;
     }
     else{
-        return `<p>${line}</p>\n`;
+        return `<p>${proccesedLine}</p>\n`;
     }
 };
 
 //Funcion para contar #
-let headerCounter = (string, counter) => string[counter]==="#"?headerCounter(string,counter+1):counter;
+const countHashtags = (str) => _.countBy(str)["#"] || 0;
 
-//Funcion para procesar texto
+//Funcion para procesar texto, reemplazando negrita y italica
 const processText = (text) => {
     return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/__(.*?)__/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/_(.*?)_/g, '<em>$1</em>');
+    .replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*)__/g, '<strong>$1</strong>')
+    .replace(/\*(.*)\*/g, '<em>$1</em>')
+    .replace(/_(.*)_/g, '<em>$1</em>');
 }
 
 //Funcion para procesar una lista
 const processList = (lines) => {
-    lines = lines.map(line => {return processText(line.replace('* ', `   <li>`) + '</li>\n');});
-
-    lines.push("</ul>\n"); // agregar tabs en lo que imprime
-    lines.unshift("<ul>\n");
-    return lines;
+    const listLines = lines.map(line => {
+        return processText(line.replace('* ', `   <li>`) + '</li>\n');
+    });
+    const result = ["<ul>\n"].concat(listLines).concat(["</ul>\n"]);
+    return result;
 };
 
 //Funcion para procesar una lista ordenada
 const processOrderdList = (lines) => {
-    let counter = 0;
-    lines = lines.map(line => {
-      counter++;
-      return processText(line.replace(`${counter}. `, `   <li>`) + '</li>\n');
+    const listLines = lines.map((value,index) => {
+      return processText(value.replace(`${index+1}. `, `   <li>`) + '</li>\n');
     });
-    lines.push("</ol>\n");
-    lines.unshift("<ol>\n");
-    return lines;
+    const result = ["<ol>\n"].concat(listLines).concat(["</ol>\n"]);
+    return result;
 };
 
 // Funcion para procesar un bloque *k hfhdifhe
 export function processBlock(lines) {
-    if (lines[0].trim()[0] === "*") {
+    if (lines[0].trim().split(" ")[0] === "*") {
         //procesar lista
         return processList(lines);
     }
-    else if (lines[0].trim()[0] === "1" && lines[0].trim()[1] === ".") {
+    else if (lines[0].trim().split(" ")[0] === "1.") {
         //procesar lista ordenada
         return processOrderdList(lines);
     }
